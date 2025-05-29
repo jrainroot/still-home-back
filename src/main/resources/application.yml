@@ -1,37 +1,8 @@
 spring:
   application:
     name: still_home
-#  profiles:
+  profiles:
 #    application-dev.yml
-#    active: dev
+    active: dev
 #    application-secret.yml
 #    include: secret
-  datasource:
-    url: jdbc:mysql://127.0.0.1:3306/still_home
-    username: jrainroot
-    password: 1111
-  jpa:
-    properties:
-      hibernate:
-        show_sql: true
-        format_sql: true
-        highlight_sql: true
-        use_sql_comments: true
-        default_batch_fetch_size: 100
-    hibernate:
-      ddl-auto: create
-    open-in-view: false
-logging:
-  level:
-#    전체 로그 기본 수준은 INFO로 설정.
-#    (이 이상인 WARN, ERROR는 출력되고, DEBUG, TRACE는 안 나옴)
-    root: INFO
-#    이 패키지의 로그만 DEBUG 수준까지 출력.
-#    (개발자 코드의 디버깅용 로그 보려는 목적)
-    com.example.sksd: DEBUG
-#    Hibernate가 SQL에 바인딩하는 파라미터 값들을 출력.
-#    예: select * from user where id=? → id=1
-    org.hibernate.orm.jdbc.bind: TRACE
-#    DB에서 결과를 추출하는 과정의 로그 출력.
-#    예: ResultSet에서 필드 값을 꺼내는 정보 등
-    org.hibernate.orm.jdbc.extract: TRACE
