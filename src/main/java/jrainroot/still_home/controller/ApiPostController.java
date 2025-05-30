@@ -18,16 +18,16 @@ public class ApiPostController {
     @GetMapping("")
     public List<Post> getPosts() {
         List<Post> posts = new ArrayList<>();
-        posts.add(new Post((1L)));
-        posts.add(new Post((2L)));
-        posts.add(new Post((3L)));
+//        posts.add(new Post((1L)));
+//        posts.add(new Post((2L)));
+//        posts.add(new Post((3L)));
 
         return posts;
     }
 
     @GetMapping("/{id}")
     public Post getPost(@PathVariable("id") Long id) {
-        Post post = new Post((id));
+        Post post = new Post();
         return post;
     }
 }
