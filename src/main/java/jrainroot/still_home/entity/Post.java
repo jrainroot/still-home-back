@@ -1,10 +1,19 @@
 package jrainroot.still_home.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import jakarta.persistence.Entity;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
+import java.time.LocalDateTime;
+
+@Entity
 @Getter
+@Setter
 @AllArgsConstructor
-public class Post {
-    private Long id;
+@NoArgsConstructor
+@SuperBuilder
+@ToString(callSuper = true)
+public class Post extends BaseEntity{
+    private String title;
+    private String content;
 }
