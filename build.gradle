@@ -32,6 +32,7 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
     // 보안인증
     implementation 'org.springframework.boot:spring-boot-starter-security'
     // 소셜로그인
