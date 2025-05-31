@@ -17,13 +17,8 @@ public class PostService {
         return this.postRepository.findAll();
     }
 
-    public Post findById(Long id) {
-        Optional<Post> optionalPost = this.postRepository.findById(id);
-        if(optionalPost.isEmpty()) {
-            return null;
-        }
-
-        return optionalPost.get();
+    public Optional<Post> findById(Long id) {
+       return this.postRepository.findById(id);
     }
 
     public void create(String subject, String content) {
