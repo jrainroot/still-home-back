@@ -2,6 +2,7 @@ package jrainroot.still_home.controller;
 
 import jakarta.servlet.http.HttpServletResponse;
 import jrainroot.still_home.entity.Post;
+import jrainroot.still_home.global.ResultData.ResultData;
 import jrainroot.still_home.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,9 +20,9 @@ public class ApiPostController {
     private final PostService postService;
 
     @GetMapping("")
-    public List<Post> getPosts() {
+    public ResultData<List<Post>> getPosts() {
         List<Post> posts = this.postService.getList();
-        return posts;
+        return ResultData.of("S-1", "success", posts);
     }
 
     @GetMapping("/{id}")
