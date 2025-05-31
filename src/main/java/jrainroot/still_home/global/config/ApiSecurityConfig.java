@@ -1,4 +1,4 @@
-package jrainroot.still_home.config;
+package jrainroot.still_home.global.config;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
