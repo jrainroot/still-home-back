@@ -28,7 +28,7 @@ public class ResultData<T> {
     }
 
     @JsonIgnore
-    public boolean isError() {
+    public boolean isFail() {
         return !isSuccess();
     }
 }
