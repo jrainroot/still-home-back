@@ -16,4 +16,6 @@ import java.time.LocalDateTime;
 public class Post extends BaseEntity{
     private String title;
     private String content;
+    private int likes;
+    private int views;
 }
