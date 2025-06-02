@@ -16,6 +16,10 @@ spring:
     hibernate:
       ddl-auto: create
     open-in-view: false
+#    devtools 자동 업데이트 끄기
+  devtools:
+    restart:
+      enabled: false
 logging:
   level:
     #    전체 로그 기본 수준은 INFO로 설정.
