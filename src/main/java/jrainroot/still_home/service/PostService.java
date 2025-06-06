@@ -1,6 +1,7 @@
 package jrainroot.still_home.service;
 
 import jakarta.transaction.Transactional;
+import jrainroot.still_home.entity.Member;
 import jrainroot.still_home.entity.Post;
 import jrainroot.still_home.global.ResultData.ResultData;
 import jrainroot.still_home.repository.PostRepository;
@@ -24,8 +25,9 @@ public class PostService {
     }
 
     @Transactional
-    public ResultData<Post> create(String title, String content) {
+    public ResultData<Post> create(Member member, String title, String content) {
         Post post = Post.builder()
+                .author(member)
                 .title(title)
                 .content(content)
                 .build();

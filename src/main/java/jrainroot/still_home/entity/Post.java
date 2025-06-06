@@ -1,10 +1,11 @@
 package jrainroot.still_home.entity;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.ManyToOne;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-
 import java.time.LocalDateTime;
+
 
 @Entity
 @Getter
@@ -14,6 +15,9 @@ import java.time.LocalDateTime;
 @SuperBuilder
 @ToString(callSuper = true)
 public class Post extends BaseEntity{
+    @ManyToOne
+    private Member author;
+
     private String title;
     private String content;
     private int likes;

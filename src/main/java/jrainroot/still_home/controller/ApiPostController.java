@@ -34,6 +34,7 @@ public class ApiPostController {
 
     // DTO
     @AllArgsConstructor
+    @Getter
     public static class PostResponse {
         private final Post post;
     }
@@ -68,7 +69,7 @@ public class ApiPostController {
     public ResultData<WriteResponse> write(@Valid @RequestBody WriteRequest writeRequest) {
 //        System.out.println(writeRequest.getSubject());
 //        System.out.println(writeRequest.getContent());
-        ResultData<Post> writeResult = this.postService.create(writeRequest.getTitle(), writeRequest.getContent());
+        ResultData<Post> writeResult = this.postService.create(null, writeRequest.getTitle(), writeRequest.getContent());
         if (writeResult.isFail()) return (ResultData) writeResult;
 
         return ResultData.of(
