@@ -1,5 +1,12 @@
 package jrainroot.still_home.entity;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+
 import jakarta.persistence.*;
 import jrainroot.still_home.model.MemberRole;
 import lombok.AllArgsConstructor;
@@ -35,4 +42,11 @@ public class Member extends BaseEntity {
     // 로그인한 유저의 고유 id
     @Column(name = "provider_id")
     private String providerId;
+
+    // 권한 체크 
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        List<GrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(new SimpleGrantedAuthority("MEMBER"));
+        return authorities;
+    }
 }

@@ -3,6 +3,9 @@ package jrainroot.still_home.service;
 import jrainroot.still_home.entity.Member;
 import jrainroot.still_home.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+
+import java.util.Optional;
+
 import org.springframework.stereotype.Service;
 
 @Service
@@ -19,5 +22,9 @@ public class MemberService {
 
         memberRepository.save(member);
         return member;
+    }
+
+    public Optional<Member> findById (Long id) {
+        return this.memberRepository.findById(id);
     }
 }

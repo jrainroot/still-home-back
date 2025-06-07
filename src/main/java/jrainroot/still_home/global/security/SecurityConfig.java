@@ -1,4 +1,4 @@
-package jrainroot.still_home.global.config;
+package jrainroot.still_home.global.security;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
