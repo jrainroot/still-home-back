@@ -2,7 +2,9 @@ spring:
   application:
     name: still_home
   profiles:
-#    application-dev.yml
+    #    application-dev.yml
     active: dev
-#    application-secret.yml
-#    include: secret
+  #    application-secret.yml
+  config:
+    import:
+      - application-secret.yml

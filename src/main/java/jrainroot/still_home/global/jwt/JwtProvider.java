@@ -2,6 +2,7 @@ package jrainroot.still_home.global.jwt;
 
 import java.util.Base64;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.crypto.SecretKey;
@@ -9,6 +10,7 @@ import javax.crypto.SecretKey;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import jrainroot.still_home.entity.Member;
 import jrainroot.still_home.global.util.Util;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -32,7 +34,14 @@ public class JwtProvider {
   }
 
   // 토큰 발행
-  public String genToken(Map<String, Object> claims, int seconds) {
+  public String genToken(Member memeber, int seconds) {
+      Map<String, Object> claims = new HashMap<>();
+
+      claims.put("id", memeber.getId());
+      claims.put("name", memeber.getName());
+      // 권한이 필요한 경우 추가
+    //   claims.put("authetication", member.getRole());
+
       long now = new Date().getTime();
       Date accessTokenExpiresIn = new Date(now + 1000L * seconds);
 

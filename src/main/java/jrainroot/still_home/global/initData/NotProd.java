@@ -18,10 +18,10 @@ public class NotProd {
         String password = passwordEncoder.encode("1234");
         return args -> {
             // 회원 3명 추가
-            Member user1 = memberService.join("이름1", password, "test@email.com");
-            Member user2 = memberService.join("이름1", password, "test@email.com");
+            Member user1 = memberService.join("user1", password, "test@email.com");
+            Member user2 = memberService.join("user2", password, "test@email.com");
             Member user3 = memberService.join("이름1", password, "test@email.com");
-            Member user4 = memberService.join("이름1", password, "test@email.com");
+            Member user4 = memberService.join("이름2", password, "test@email.com");
 
 
             // 작성자 회원 추가
