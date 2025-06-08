@@ -1,13 +1,18 @@
 package jrainroot.still_home.service;
 
 import jrainroot.still_home.entity.Member;
+import jrainroot.still_home.global.ResultData.ResultData;
 import jrainroot.still_home.global.jwt.JwtProvider;
 import jrainroot.still_home.repository.MemberRepository;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
+
+import jakarta.transaction.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -30,7 +35,16 @@ public class MemberService {
         return this.memberRepository.findById(id);
     }
 
-    public String authAndMakeTokens(String name, String password) {
+
+    @AllArgsConstructor
+    @Getter
+    public static class AuthAndMakeTokenResponseBody {
+        private Member member;
+        private String accessToken;
+    }
+
+    @Transactional
+    public ResultData<AuthAndMakeTokenResponseBody> authAndMakeTokens(String name, String password) {
         Member member = this.memberRepository.findByName(name)
             .orElseThrow(() -> new RuntimeException("사용자가 존재하지 않습니다."));
         
@@ -45,7 +59,11 @@ public class MemberService {
         // 시간 설정 및 토큰 생성
         String accessToken = jwtProvider.genToken(member, 60 * 60 * 5);
 
-        System.out.println("accessToke = " + accessToken);
-        return accessToken;
+        // System.out.println("accessToke = " + accessToken);
+        return ResultData.of(
+            "200-1", 
+            "로그인 성공", 
+            new AuthAndMakeTokenResponseBody(member, accessToken)
+        );
     }
 }

@@ -1,5 +1,6 @@
 package jrainroot.still_home.controller;
 
+import jrainroot.still_home.dto.MemberDto;
 import jrainroot.still_home.entity.Member;
 import jrainroot.still_home.global.ResultData.ResultData;
 import jrainroot.still_home.service.MemberService;
@@ -32,15 +33,17 @@ public class ApiMemberController {
     @Getter
     @AllArgsConstructor
     public static class LoginResponseBody {
-        private Member loginResponse;
-        
+        private MemberDto memberDto;
     }
 
     @PostMapping("/login")
-    public ResultData<LoginRequestBody> login(@Valid @RequestBody LoginRequestBody loginRequestBody) {
+    public ResultData<LoginResponseBody> login(@Valid @RequestBody LoginRequestBody loginRequestBody) {
         // username, password => accessToken
-        memberService.authAndMakeTokens(loginRequestBody.getName(), loginRequestBody.getPassword());
-        return ResultData.of("ok", "ok", null);
+        ResultData<MemberService.AuthAndMakeTokenResponseBody> authAndMakeTokenResultData = memberService.authAndMakeTokens(loginRequestBody.getName(), loginRequestBody.getPassword());
+        return ResultData.of(
+            authAndMakeTokenResultData.getResultCode(),
+            authAndMakeTokenResultData.getMsg(),
+            new LoginResponseBody(new MemberDto(authAndMakeTokenResultData.getData().getMember())));
     }
 
     @GetMapping("/test")
