@@ -64,6 +64,11 @@ public class ApiMemberController {
             new LoginResponseBody(new MemberDto(authAndMakeTokenResultData.getData().getMember())));
     }
 
+    @GetMapping("/me")
+    public String me() {
+        return "내 정보";
+    }
+
     @GetMapping("/test")
     public String memberTest() {
         return "멤버 테스트";

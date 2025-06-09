@@ -1,29 +1,24 @@
 package jrainroot.still_home.global.security.filter;
 
 import java.io.IOException;
-import java.util.Map;
-
+import java.util.Arrays;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jrainroot.still_home.entity.Member;
-import jrainroot.still_home.global.jwt.JwtProvider;
+import jrainroot.still_home.global.security.SecurityUser;
 import jrainroot.still_home.service.MemberService;
 import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
 public class JwtAuthorizationFilter extends OncePerRequestFilter{
-    
+    private final HttpServletRequest req;
+    private final MemberService memberService;
 
     // 위에거 안쓰고 아래걸로 갑자기 바꿨는데 이유 찾기 
     @Override
@@ -34,13 +29,27 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter{
         }
 
         // accessToken을 쿠키에서 가져올거임 
-        String accessToken = "";
+        String accessToken = _getCookie("accessToken");
         // accessToken 검증 , refreshToken 발급
         if (!accessToken.isBlank()) {
-
+            // accessToken을 이용해서 securityUser를 가져온다.
+            SecurityUser securityUser = memberService.getMemberFromAccessToken(accessToken);
+            // 인가 처리
+            SecurityContextHolder.getContext().setAuthentication(securityUser.genAuthentication());
         }
 
         filterChain.doFilter(request, response);
+    }
+
+    // Cookie를 가져오는 내부 메서드 
+    private String _getCookie(String name) {
+        Cookie[] cookies = req.getCookies();
+
+        return Arrays.stream(cookies)
+                    .filter(cookie -> cookie.getName().equals(name))
+                    .findFirst()
+                    .map(Cookie::getValue)
+                    .orElse("");
     }
 
     // 아래거 안쓰고 위에걸로 쓰네?

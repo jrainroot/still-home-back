@@ -51,7 +51,7 @@ public class ApiSecurityConfig {
                 .addFilterBefore(
                         jwtAuthorizationFilter, // 엑세스 토큰을 이용한 로그인 처리
                         UsernamePasswordAuthenticationFilter.class
-                        )
+                )
                 ;
                 return http.build();
     }

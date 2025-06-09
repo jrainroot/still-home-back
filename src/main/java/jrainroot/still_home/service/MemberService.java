@@ -3,13 +3,19 @@ package jrainroot.still_home.service;
 import jrainroot.still_home.entity.Member;
 import jrainroot.still_home.global.ResultData.ResultData;
 import jrainroot.still_home.global.jwt.JwtProvider;
+import jrainroot.still_home.global.security.SecurityUser;
 import jrainroot.still_home.repository.MemberRepository;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
@@ -66,4 +72,15 @@ public class MemberService {
             new AuthAndMakeTokenResponseBody(member, accessToken)
         );
     }
+
+    public SecurityUser getMemberFromAccessToken(String accessToken) {
+        Map<String, Object> payloadBody = jwtProvider.getClaims(accessToken);
+        long id = (int) payloadBody.get("id");
+        String username = (String) payloadBody.get("name");
+        List<GrantedAuthority> authorities = new ArrayList<>();
+
+        return new SecurityUser(id, username, "", authorities);
+    }
+
+  
 }
