@@ -33,6 +33,14 @@ public class JwtProvider {
       return Keys.hmacShaKeyFor(KeyBase64Encoded.getBytes());
   }
 
+  public String genRefreshToken(Member member) {
+      return genToken(member, 60 * 60 * 24 * 365 * 1); // 1 year
+  }
+
+  public String genAccessToken(Member member) {
+      return genToken(member, 60 * 10); // 10 minutes
+  }
+
   // 토큰 발행
   public String genToken(Member memeber, int seconds) {
       Map<String, Object> claims = new HashMap<>();

@@ -33,6 +33,9 @@ public class MemberService {
         .email(email)
         .build();
 
+        String refreshToken = jwtProvider.genRefreshToken(member);
+        member.setRefreshToken(refreshToken);
+
         memberRepository.save(member);
         return member;
     }

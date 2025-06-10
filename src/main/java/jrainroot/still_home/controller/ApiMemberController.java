@@ -42,9 +42,9 @@ public class ApiMemberController {
     @PostMapping("/login")
     public ResultData<LoginResponseBody> login(@Valid @RequestBody LoginRequestBody loginRequestBody, HttpServletResponse resp) {
         // username, password => accessToken
-        ResultData<MemberService.AuthAndMakeTokenResponseBody> authAndMakeTokenResultData = memberService.authAndMakeTokens(loginRequestBody.getName(), loginRequestBody.getPassword());
-        
-        
+        ResultData<MemberService.AuthAndMakeTokenResponseBody> authAndMakeTokenResultData = memberService.authAndMakeTokens(
+                loginRequestBody.getName(),
+                loginRequestBody.getPassword());
 
         ResponseCookie cookie =  ResponseCookie.from("accessToken", authAndMakeTokenResultData.getData().getAccessToken())
             .path("/")
@@ -56,7 +56,6 @@ public class ApiMemberController {
         
         // header에 token 추가
         // resp.addHeader("Set-Cookie", authAndMakeTokenResultData.getData().getAccessToken());
-        
         
         return ResultData.of(
             authAndMakeTokenResultData.getResultCode(),

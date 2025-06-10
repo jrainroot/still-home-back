@@ -23,10 +23,6 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 public class Member extends BaseEntity {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="member_id")
-    private Long id;
-
     private String email;
     private String name;
 
@@ -43,10 +39,12 @@ public class Member extends BaseEntity {
     @Column(name = "provider_id")
     private String providerId;
 
+    private String refreshToken;
+
     // 권한 체크 
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        List<GrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority("MEMBER"));
-        return authorities;
-    }
+//    public Collection<? extends GrantedAuthority> getAuthorities() {
+//        List<GrantedAuthority> authorities = new ArrayList<>();
+//        authorities.add(new SimpleGrantedAuthority("MEMBER"));
+//        return authorities;
+//    }
 }
