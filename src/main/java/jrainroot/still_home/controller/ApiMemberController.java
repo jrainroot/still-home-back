@@ -25,6 +25,7 @@ import jakarta.validation.constraints.NotBlank;
 public class ApiMemberController {
     private final MemberService memberService;
 
+    private final HttpServletResponse resp;
     @Getter
     public static class LoginRequestBody {
         @NotBlank
@@ -40,27 +41,30 @@ public class ApiMemberController {
     }
 
     @PostMapping("/login")
-    public ResultData<LoginResponseBody> login(@Valid @RequestBody LoginRequestBody loginRequestBody, HttpServletResponse resp) {
-        // username, password => accessToken
+    public ResultData<LoginResponseBody> login(@Valid @RequestBody LoginRequestBody loginRequestBody) {
+
         ResultData<MemberService.AuthAndMakeTokenResponseBody> authAndMakeTokenResultData = memberService.authAndMakeTokens(
                 loginRequestBody.getName(),
                 loginRequestBody.getPassword());
 
-        ResponseCookie cookie =  ResponseCookie.from("accessToken", authAndMakeTokenResultData.getData().getAccessToken())
-            .path("/")
-            .sameSite("None")
-            .secure(true)
-            .httpOnly(true) // 프론트에서 직접적인 접근이 안되어 보안상 좋음 
-            .build();
-        resp.addHeader("Set-Cookie", cookie.toString());    
-        
-        // header에 token 추가
-        // resp.addHeader("Set-Cookie", authAndMakeTokenResultData.getData().getAccessToken());
-        
+        // 쿠키에 accessToken, refreshToken 토큰 넣기
+        _addHeaderCookie("accessToken", authAndMakeTokenResultData.getData().getAccessToken());
+        _addHeaderCookie("refreshToken", authAndMakeTokenResultData.getData().getRefreshToken());
+
         return ResultData.of(
             authAndMakeTokenResultData.getResultCode(),
             authAndMakeTokenResultData.getMsg(),
             new LoginResponseBody(new MemberDto(authAndMakeTokenResultData.getData().getMember())));
+    }
+
+    private void _addHeaderCookie(String tokenName, String token) {
+        ResponseCookie cookie =  ResponseCookie.from(tokenName, token)
+                .path("/")
+                .sameSite("None")
+                .secure(true)
+                .httpOnly(true) // 프론트에서 직접적인 접근이 안되어 보안상 좋음
+                .build();
+        resp.addHeader("Set-Cookie", cookie.toString());
     }
 
     @GetMapping("/me")

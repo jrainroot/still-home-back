@@ -40,6 +40,21 @@ public class MemberService {
         return member;
     }
 
+    // token 유효성 검사
+    public boolean validateToken(String token) {
+        return jwtProvider.verify(token);
+    }
+
+    public ResultData<String> refreshAccessToken(String refreshToken) {
+        Member member = memberRepository.findByRefreshToken(refreshToken)
+                .orElseThrow(() -> new RuntimeException("존재하지 않는 리프레시 토큰입니다."));
+
+        String accessToken = jwtProvider.genAccessToken(member);
+
+        return ResultData.of("200-1", "토큰 갱신 성공", accessToken);
+    }
+
+
     public Optional<Member> findById (Long id) {
         return this.memberRepository.findById(id);
     }
@@ -50,6 +65,7 @@ public class MemberService {
     public static class AuthAndMakeTokenResponseBody {
         private Member member;
         private String accessToken;
+        private String refreshToken;
     }
 
     @Transactional
@@ -66,13 +82,15 @@ public class MemberService {
         // }
         
         // 시간 설정 및 토큰 생성
-        String accessToken = jwtProvider.genToken(member, 60 * 60 * 5);
+        String accessToken = jwtProvider.genAccessToken(member);
 
-        // System.out.println("accessToke = " + accessToken);
+        // 리프레시 토큰 생성
+        String refreshToken = jwtProvider.genRefreshToken(member);
+
         return ResultData.of(
             "200-1", 
             "로그인 성공", 
-            new AuthAndMakeTokenResponseBody(member, accessToken)
+            new AuthAndMakeTokenResponseBody(member, accessToken, refreshToken)
         );
     }
 

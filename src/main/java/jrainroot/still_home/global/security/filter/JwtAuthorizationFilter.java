@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.Arrays;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jrainroot.still_home.global.ResultData.ResultData;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -18,9 +20,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class JwtAuthorizationFilter extends OncePerRequestFilter{
     private final HttpServletRequest req;
+    private final HttpServletResponse resp;
     private final MemberService memberService;
 
-    // 위에거 안쓰고 아래걸로 갑자기 바꿨는데 이유 찾기 
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
         if (request.getRequestURI().equals("/api/members/login") || request.getRequestURI().equals("/api/members/logout")) {
@@ -32,6 +35,12 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter{
         String accessToken = _getCookie("accessToken");
         // accessToken 검증 , refreshToken 발급
         if (!accessToken.isBlank()) {
+            // 토큰 유효기간이 지났을 때(문제가 있을 때)
+            if(!memberService.validateToken(accessToken)) {
+                String refreshToken = _getCookie("refreshToken");
+                ResultData<String> resultData = memberService.refreshAccessToken(refreshToken);
+                _addHeaderCookie("accessToken", resultData.getData());
+            }
             // accessToken을 이용해서 securityUser를 가져온다.
             SecurityUser securityUser = memberService.getMemberFromAccessToken(accessToken);
             // 인가 처리
@@ -39,6 +48,16 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter{
         }
 
         filterChain.doFilter(request, response);
+    }
+
+    private void _addHeaderCookie(String tokenName, String token) {
+        ResponseCookie cookie =  ResponseCookie.from(tokenName, token)
+                .path("/")
+                .sameSite("None")
+                .secure(true)
+                .httpOnly(true) // 프론트에서 직접적인 접근이 안되어 보안상 좋음
+                .build();
+        resp.addHeader("Set-Cookie", cookie.toString());
     }
 
     // Cookie를 가져오는 내부 메서드 
