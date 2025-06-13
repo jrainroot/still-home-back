@@ -63,7 +63,9 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter{
     // Cookie를 가져오는 내부 메서드 
     private String _getCookie(String name) {
         Cookie[] cookies = req.getCookies();
-
+        if (cookies == null) {
+            return "";
+        }
         return Arrays.stream(cookies)
                     .filter(cookie -> cookie.getName().equals(name))
                     .findFirst()
