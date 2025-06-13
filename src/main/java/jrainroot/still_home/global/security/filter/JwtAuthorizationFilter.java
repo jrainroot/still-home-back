@@ -5,11 +5,11 @@ import java.util.Arrays;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jrainroot.still_home.global.ResultData.ResultData;
+import jrainroot.still_home.global.request.RequestLogin;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jrainroot.still_home.global.security.SecurityUser;
@@ -19,9 +19,8 @@ import lombok.RequiredArgsConstructor;
 @Component
 @RequiredArgsConstructor
 public class JwtAuthorizationFilter extends OncePerRequestFilter{
-    private final HttpServletRequest req;
-    private final HttpServletResponse resp;
     private final MemberService memberService;
+    private final RequestLogin requestLogin;
 
 
     @Override
@@ -32,45 +31,22 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter{
         }
 
         // accessToken을 쿠키에서 가져올거임 
-        String accessToken = _getCookie("accessToken");
+        String accessToken = requestLogin.getCookie("accessToken");
         // accessToken 검증 , refreshToken 발급
         if (!accessToken.isBlank()) {
             // 토큰 유효기간이 지났을 때(문제가 있을 때)
             if(!memberService.validateToken(accessToken)) {
-                String refreshToken = _getCookie("refreshToken");
+                String refreshToken = requestLogin.getCookie("refreshToken");
                 ResultData<String> resultData = memberService.refreshAccessToken(refreshToken);
-                _addHeaderCookie("accessToken", resultData.getData());
+                requestLogin.setCrossDomainCookie("accessToken", resultData.getData());
             }
             // accessToken을 이용해서 securityUser를 가져온다.
             SecurityUser securityUser = memberService.getMemberFromAccessToken(accessToken);
-            // 인가 처리
-            SecurityContextHolder.getContext().setAuthentication(securityUser.genAuthentication());
+            // 로그인 처리
+            requestLogin.setLogin(securityUser);
         }
 
         filterChain.doFilter(request, response);
-    }
-
-    private void _addHeaderCookie(String tokenName, String token) {
-        ResponseCookie cookie =  ResponseCookie.from(tokenName, token)
-                .path("/")
-                .sameSite("None")
-                .secure(true)
-                .httpOnly(true) // 프론트에서 직접적인 접근이 안되어 보안상 좋음
-                .build();
-        resp.addHeader("Set-Cookie", cookie.toString());
-    }
-
-    // Cookie를 가져오는 내부 메서드 
-    private String _getCookie(String name) {
-        Cookie[] cookies = req.getCookies();
-        if (cookies == null) {
-            return "";
-        }
-        return Arrays.stream(cookies)
-                    .filter(cookie -> cookie.getName().equals(name))
-                    .findFirst()
-                    .map(Cookie::getValue)
-                    .orElse("");
     }
 
     // 아래거 안쓰고 위에걸로 쓰네?

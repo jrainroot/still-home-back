@@ -2,13 +2,15 @@ package jrainroot.still_home.global.security;
 
 import java.util.Collection;
 
+import lombok.Getter;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 
+@Getter
 public class SecurityUser extends User {
-    private long id;
+    private final long id;
 
     public SecurityUser(long id,
                         String username,
@@ -18,7 +20,8 @@ public class SecurityUser extends User {
         this.id = id;
     }
 
-    public SecurityUser(String username,
+    public SecurityUser(long id,
+                        String username,
                         String password,
                         boolean enabled,
                         boolean accountNonExpired,

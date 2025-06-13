@@ -1,8 +1,8 @@
 package jrainroot.still_home.controller;
 
 import jrainroot.still_home.dto.MemberDto;
-import jrainroot.still_home.entity.Member;
 import jrainroot.still_home.global.ResultData.ResultData;
+import jrainroot.still_home.global.request.RequestLogin;
 import jrainroot.still_home.service.MemberService;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -24,8 +24,8 @@ import jakarta.validation.constraints.NotBlank;
 @RequiredArgsConstructor
 public class ApiMemberController {
     private final MemberService memberService;
+    private final RequestLogin requestLogin;
 
-    private final HttpServletResponse resp;
     @Getter
     public static class LoginRequestBody {
         @NotBlank
@@ -48,23 +48,13 @@ public class ApiMemberController {
                 loginRequestBody.getPassword());
 
         // 쿠키에 accessToken, refreshToken 토큰 넣기
-        _addHeaderCookie("accessToken", authAndMakeTokenResultData.getData().getAccessToken());
-        _addHeaderCookie("refreshToken", authAndMakeTokenResultData.getData().getRefreshToken());
+        requestLogin.setCrossDomainCookie("accessToken", authAndMakeTokenResultData.getData().getAccessToken());
+        requestLogin.setCrossDomainCookie("refreshToken", authAndMakeTokenResultData.getData().getRefreshToken());
 
         return ResultData.of(
             authAndMakeTokenResultData.getResultCode(),
             authAndMakeTokenResultData.getMsg(),
             new LoginResponseBody(new MemberDto(authAndMakeTokenResultData.getData().getMember())));
-    }
-
-    private void _addHeaderCookie(String tokenName, String token) {
-        ResponseCookie cookie =  ResponseCookie.from(tokenName, token)
-                .path("/")
-                .sameSite("None")
-                .secure(true)
-                .httpOnly(true) // 프론트에서 직접적인 접근이 안되어 보안상 좋음
-                .build();
-        resp.addHeader("Set-Cookie", cookie.toString());
     }
 
     @GetMapping("/me")
