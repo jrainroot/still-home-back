@@ -21,8 +21,9 @@ import java.util.Optional;
 public class RequestLogin {
     private final HttpServletResponse resp;
     private final HttpServletRequest req;
-    private Member member;
     private final EntityManager em;
+    private Member member;
+
 
     public String getCookie(String name) {
         Cookie[] cookies = req.getCookies();
@@ -46,12 +47,25 @@ public class RequestLogin {
         resp.addHeader("Set-Cookie", cookie.toString());
     }
 
+    public void deleteCrossDomainCookie(String name) {
+        ResponseCookie cookie =  ResponseCookie.from(name, null)
+                .path("/")
+                .maxAge(0)
+                .sameSite("None")
+                .secure(true)
+                .httpOnly(true) // 프론트에서 직접적인 접근이 안되어 보안상 좋음
+                .build();
+        resp.addHeader("Set-Cookie", cookie.toString());
+    }
+
     public Member getMember() {
         if (isLogout()) return null;
 
         if(member == null) {
             member = em.getReference(Member.class, getUser().getId());
         }
+        System.out.println("멤버 아이디 확인");
+        System.out.println("member Id :" + member.getId());
         return member;
     }
 

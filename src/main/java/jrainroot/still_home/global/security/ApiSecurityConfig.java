@@ -28,7 +28,8 @@ public class ApiSecurityConfig {
                                 .requestMatchers("/api/posts").permitAll()   // 전체글 보기는 누구나 가능
                                 .requestMatchers("/api/posts/*").permitAll() // 게시글 상세 보기는 누구나 가능
                                 .requestMatchers("/api/members/login").permitAll() // 로그인은 누구나 가능
-                                // .requestMatchers(HttpMethod.POST, "/api/members/login").permitAll() // 이런식으로 HttpMethod만 허용핧 수 있음 
+                                .requestMatchers("/api/members/logout").permitAll() // 로그아웃은 누구나 가능
+                                // .requestMatchers(HttpMethod.POST, "/api/members/login").permitAll() // 이런식으로 HttpMethod만 허용핧 수 있음
                                 
                                 .anyRequest().authenticated() // 위 조건 외에는 전부 인증된 처리자만 가능하도록 
                 )
